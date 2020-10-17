@@ -1,6 +1,6 @@
 /*globals exports*/
 
-(function twofish(exports) {
+(function twofish(exports, buffer) {
 
   var twofishAlgorithm = {};
 
@@ -729,20 +729,19 @@
    * @param keyText to use for encryption
    * @return encrypted message, or throw an error
    */
-  twofishCypher.encrypt = function encrypt (input, keyText, buffer) {
+  twofishCypher.encrypt = function encrypt (input, keyText) {
     if (!input) {
       throw new Error('must be given valid input');
     }
     input = input + "";
     keyText = keyText || process.env.KEY;
     
-    buffer = buffer || Buffer;
-    const buf = new buffer(input)
-    var key = twofishAlgorithm.makeKey(new buffer(keyText))
+    const buf = buffer.from(input)
+    var key = twofishAlgorithm.makeKey(buffer.from(keyText))
       , blockSize = defaultOpts.blockSize
       , inputLengthModulo = buf.length % blockSize
       , paddedLength = buf.length + (inputLengthModulo !== 0 && (blockSize - inputLengthModulo))
-      , outs = new buffer(paddedLength);
+      , outs = buffer.alloc(paddedLength);
 
     for (var i = 0; i < paddedLength; i += blockSize) {
       var encrypted = twofishAlgorithm.blockEncrypt(buf, i, key);
@@ -760,13 +759,12 @@
    * @param keyText to use for decryption
    * @return decrypted message, or throw an error
    */
-  twofishCypher.decrypt = function decrypt (input, keyText, buffer) {
+  twofishCypher.decrypt = function decrypt (input, keyText) {
     keyText = keyText || process.env.KEY;
-    buffer = buffer || Buffer;
-    const buf = new buffer(hexStringToBytes(input))
-    var key = twofishAlgorithm.makeKey(new buffer(keyText))
+    const buf = buffer.from(hexStringToBytes(input))
+    var key = twofishAlgorithm.makeKey(buffer.from(keyText))
       , blockSize = defaultOpts.blockSize
-      , outs = new buffer(buf.length)
+      , outs = buffer.alloc(buf.length)
       , lastSigIndex;
 
     if ((buf.length % blockSize) !== 0) {
@@ -848,5 +846,4 @@
     };
   };
 
-}(typeof exports === 'undefined' ? this : exports));
-
+}(typeof exports === 'undefined' ? this : exports, Buffer));
