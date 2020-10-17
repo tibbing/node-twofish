@@ -1,8 +1,8 @@
 /*globals exports*/
 
-(function twofish(exports, buffer) {
-
+(function twofish(exports) {
   var twofishAlgorithm = {};
+  const buffer = exports.Buffer || Buffer;
 
   // debug methods and variables
   var NAME = "Twofish_Algorithm"
@@ -839,11 +839,9 @@
       return outs;
   };
 
-  exports.twofish = function twofish() {
-    return {
-      'encrypt': twofishCypher.encrypt,
-      'decrypt': twofishCypher.decrypt,
-    };
-  };
+  exports.twofish = ({
+    'encrypt': twofishCypher.encrypt,
+    'decrypt': twofishCypher.decrypt,
+  });
 
-}(typeof exports === 'undefined' ? this : exports, Buffer));
+}(typeof exports === 'undefined' ? this : exports));
