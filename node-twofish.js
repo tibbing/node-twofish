@@ -729,19 +729,20 @@
    * @param keyText to use for encryption
    * @return encrypted message, or throw an error
    */
-  twofishCypher.encrypt = function encrypt (input, keyText) {
+  twofishCypher.encrypt = function encrypt (input, keyText, buffer) {
     if (!input) {
       throw new Error('must be given valid input');
     }
     input = input + "";
     keyText = keyText || process.env.KEY;
     
-    const buf = new Buffer(input)
-    var key = twofishAlgorithm.makeKey(new Buffer(keyText))
+    buffer = buffer || Buffer;
+    const buf = new buffer(input)
+    var key = twofishAlgorithm.makeKey(new buffer(keyText))
       , blockSize = defaultOpts.blockSize
       , inputLengthModulo = buf.length % blockSize
       , paddedLength = buf.length + (inputLengthModulo !== 0 && (blockSize - inputLengthModulo))
-      , outs = new Buffer(paddedLength);
+      , outs = new buffer(paddedLength);
 
     for (var i = 0; i < paddedLength; i += blockSize) {
       var encrypted = twofishAlgorithm.blockEncrypt(buf, i, key);
@@ -759,12 +760,13 @@
    * @param keyText to use for decryption
    * @return decrypted message, or throw an error
    */
-  twofishCypher.decrypt = function decrypt (input, keyText) {
+  twofishCypher.decrypt = function decrypt (input, keyText, buffer) {
     keyText = keyText || process.env.KEY;
-    const buf = new Buffer(hexStringToBytes(input))
-    var key = twofishAlgorithm.makeKey(new Buffer(keyText))
+    buffer = buffer || Buffer;
+    const buf = new buffer(hexStringToBytes(input))
+    var key = twofishAlgorithm.makeKey(new buffer(keyText))
       , blockSize = defaultOpts.blockSize
-      , outs = new Buffer(buf.length)
+      , outs = new buffer(buf.length)
       , lastSigIndex;
 
     if ((buf.length % blockSize) !== 0) {
