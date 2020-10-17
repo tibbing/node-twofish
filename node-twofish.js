@@ -1,9 +1,6 @@
 /*globals exports*/
-
 (function twofish(exports) {
   var twofishAlgorithm = {};
-  const buffer = exports.Buffer || Buffer;
-
   // debug methods and variables
   var NAME = "Twofish_Algorithm"
     , DEBUG = false
@@ -736,12 +733,12 @@
     input = input + "";
     keyText = keyText || process.env.KEY;
     
-    const buf = buffer.from(input)
-    var key = twofishAlgorithm.makeKey(buffer.from(keyText))
+    const buf = Buffer.from(input)
+    var key = twofishAlgorithm.makeKey(Buffer.from(keyText))
       , blockSize = defaultOpts.blockSize
       , inputLengthModulo = buf.length % blockSize
       , paddedLength = buf.length + (inputLengthModulo !== 0 && (blockSize - inputLengthModulo))
-      , outs = buffer.alloc(paddedLength);
+      , outs = Buffer.alloc(paddedLength);
 
     for (var i = 0; i < paddedLength; i += blockSize) {
       var encrypted = twofishAlgorithm.blockEncrypt(buf, i, key);
@@ -761,10 +758,10 @@
    */
   twofishCypher.decrypt = function decrypt (input, keyText) {
     keyText = keyText || process.env.KEY;
-    const buf = buffer.from(hexStringToBytes(input))
-    var key = twofishAlgorithm.makeKey(buffer.from(keyText))
+    const buf = Buffer.from(hexStringToBytes(input))
+    var key = twofishAlgorithm.makeKey(Buffer.from(keyText))
       , blockSize = defaultOpts.blockSize
-      , outs = buffer.alloc(buf.length)
+      , outs = Buffer.alloc(buf.length)
       , lastSigIndex;
 
     if ((buf.length % blockSize) !== 0) {
